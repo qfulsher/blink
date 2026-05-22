@@ -1,0 +1,311 @@
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "ESP Component Registry" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img "ESP Component Registry" [ref=e5]
+      - list [ref=e24]:
+        - listitem [ref=e25]:
+          - link "Docs" [ref=e26] [cursor=pointer]:
+            - /url: https://docs.espressif.com/projects/idf-component-manager/
+        - listitem [ref=e27]:
+          - link "Blog" [ref=e28] [cursor=pointer]:
+            - /url: https://developer.espressif.com/tags/component/
+        - listitem [ref=e29]:
+          - link "Sign in" [ref=e30] [cursor=pointer]:
+            - /url: /users/login
+        - listitem [ref=e31]:
+          - generic [ref=e32] [cursor=pointer]:
+            - img [ref=e33]
+            - checkbox [ref=e35]
+            - img [ref=e36]
+  - banner
+  - generic [ref=e39]:
+    - heading "The ESP Component Registry" [level=1] [ref=e40]
+    - paragraph [ref=e42]: Discover, download and publish components and examples for ESP-IDF
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - combobox [expanded] [active] [ref=e45]: Search components
+        - listbox [ref=e234]:
+          - list [ref=e235]:
+            - listitem [ref=e236]:
+              - option "Namespace" [ref=e237] [cursor=pointer]:
+                - img [ref=e238]
+                - generic [ref=e241]: Namespace
+            - listitem [ref=e242]:
+              - option "Tags" [ref=e243] [cursor=pointer]:
+                - img [ref=e244]
+                - generic [ref=e247]: Tags
+            - listitem [ref=e248]:
+              - option "Target" [ref=e249] [cursor=pointer]:
+                - img [ref=e250]
+                - generic [ref=e253]: Target
+            - listitem [ref=e254]:
+              - option "IDF Version" [ref=e255] [cursor=pointer]:
+                - img [ref=e256]
+                - generic [ref=e259]: IDF Version
+      - button [ref=e46] [cursor=pointer]:
+        - img
+    - generic [ref=e47]:
+      - heading "Browse components" [level=3] [ref=e48]
+      - generic [ref=e49]:
+        - link "ALL" [ref=e50] [cursor=pointer]:
+          - /url: /components
+        - link "Board Support Package" [ref=e51] [cursor=pointer]:
+          - /url: /components?q=tags:bsp
+      - generic [ref=e52]:
+        - text: "Compatible with ESP-IDF:"
+        - link "v5.2" [ref=e53] [cursor=pointer]:
+          - /url: /components?q=idf:5.2
+        - link "v5.3" [ref=e54] [cursor=pointer]:
+          - /url: /components?q=idf:5.3
+        - link "v5.4" [ref=e55] [cursor=pointer]:
+          - /url: /components?q=idf:5.4
+        - link "v5.5" [ref=e56] [cursor=pointer]:
+          - /url: /components?q=idf:5.5
+        - link "v6.0" [ref=e57] [cursor=pointer]:
+          - /url: /components?q=idf:6.0
+      - generic [ref=e58]:
+        - text: "By target:"
+        - link "ESP32" [ref=e59] [cursor=pointer]:
+          - /url: /components?q=target:esp32
+        - link "ESP32-C2" [ref=e60] [cursor=pointer]:
+          - /url: /components?q=target:esp32c2
+        - link "ESP32-C3" [ref=e61] [cursor=pointer]:
+          - /url: /components?q=target:esp32c3
+        - link "ESP32-C5" [ref=e62] [cursor=pointer]:
+          - /url: /components?q=target:esp32c5
+        - link "ESP32-C6" [ref=e63] [cursor=pointer]:
+          - /url: /components?q=target:esp32c6
+        - link "ESP32-C61" [ref=e64] [cursor=pointer]:
+          - /url: /components?q=target:esp32c61
+        - link "ESP32-H2" [ref=e65] [cursor=pointer]:
+          - /url: /components?q=target:esp32h2
+        - link "ESP32-H21" [ref=e66] [cursor=pointer]:
+          - /url: /components?q=target:esp32h21
+        - link "ESP32-H4" [ref=e67] [cursor=pointer]:
+          - /url: /components?q=target:esp32h4
+        - link "ESP32-P4" [ref=e68] [cursor=pointer]:
+          - /url: /components?q=target:esp32p4
+        - link "ESP32-S2" [ref=e69] [cursor=pointer]:
+          - /url: /components?q=target:esp32s2
+        - link "ESP32-S3" [ref=e70] [cursor=pointer]:
+          - /url: /components?q=target:esp32s3
+        - link "ESP32-S31" [ref=e71] [cursor=pointer]:
+          - /url: /components?q=target:esp32s31
+        - link "LINUX" [ref=e72] [cursor=pointer]:
+          - /url: /components?q=target:linux
+    - generic [ref=e73]:
+      - heading "Featured components are manually selected by Espressif Featured" [level=1] [ref=e74]
+      - list [ref=e75]:
+        - link "joltwallet/littlefs v1.22.1 uploaded 4 hours ago LittleFS is a small fail-safe filesystem for micro-controllers." [ref=e76] [cursor=pointer]:
+          - /url: /components/joltwallet/littlefs/versions/1.22.1/readme
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - generic [ref=e79]: joltwallet/littlefs
+              - text: v1.22.1
+            - generic [ref=e80]: uploaded 4 hours ago
+            - generic [ref=e81]: LittleFS is a small fail-safe filesystem for micro-controllers.
+        - link "espressif/esp-modbus v2.1.2 uploaded 3 months ago ESP-MODBUS is the official Modbus library for Espressif SoCs." [ref=e82] [cursor=pointer]:
+          - /url: /components/espressif/esp-modbus/versions/2.1.2/readme
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - generic [ref=e85]: espressif/esp-modbus
+              - text: v2.1.2
+            - generic [ref=e86]: uploaded 3 months ago
+            - generic [ref=e87]: ESP-MODBUS is the official Modbus library for Espressif SoCs.
+        - link "lvgl/lvgl v9.5.0 uploaded 3 months ago LVGL - Light and Versatile Graphics Library" [ref=e88] [cursor=pointer]:
+          - /url: /components/lvgl/lvgl/versions/9.5.0/readme
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - generic [ref=e91]: lvgl/lvgl
+              - text: v9.5.0
+            - generic [ref=e92]: uploaded 3 months ago
+            - generic [ref=e93]: LVGL - Light and Versatile Graphics Library
+        - link "espressif/mdns v1.11.1 uploaded 1 month ago Multicast UDP service used to provide local network service and host discovery." [ref=e94] [cursor=pointer]:
+          - /url: /components/espressif/mdns/versions/1.11.1/readme
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - generic [ref=e97]: espressif/mdns
+              - text: v1.11.1
+            - generic [ref=e98]: uploaded 1 month ago
+            - generic [ref=e99]: Multicast UDP service used to provide local network service and host discovery.
+        - link "wolfssl/wolfssl v5.8.2~1 uploaded 8 months ago wolfSSL Embedded SSL/TLS Library" [ref=e100] [cursor=pointer]:
+          - /url: /components/wolfssl/wolfssl/versions/5.8.2~1/readme
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - generic [ref=e103]: wolfssl/wolfssl
+              - text: v5.8.2~1
+            - generic [ref=e104]: uploaded 8 months ago
+            - generic [ref=e105]: wolfSSL Embedded SSL/TLS Library
+        - link "espressif/arduino-esp32 v3.3.8 uploaded 1 month ago Arduino core for ESP32, ESP32-C, ESP32-H, ESP32-P, ESP32-S series of SoCs" [ref=e106] [cursor=pointer]:
+          - /url: /components/espressif/arduino-esp32/versions/3.3.8/readme
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - generic [ref=e109]: espressif/arduino-esp32
+              - text: v3.3.8
+            - generic [ref=e110]: uploaded 1 month ago
+            - generic [ref=e111]: Arduino core for ESP32, ESP32-C, ESP32-H, ESP32-P, ESP32-S series of SoCs
+        - link "espressif/openai v1.1.0 uploaded 9 months ago OpenAI library compatible with ESP-IDF" [ref=e112] [cursor=pointer]:
+          - /url: /components/espressif/openai/versions/1.1.0/readme
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]: espressif/openai
+              - text: v1.1.0
+            - generic [ref=e116]: uploaded 9 months ago
+            - generic [ref=e117]: OpenAI library compatible with ESP-IDF
+        - link "slint/slint v1.16.1 uploaded 4 weeks ago Slint — declarative GUI toolkit" [ref=e118] [cursor=pointer]:
+          - /url: /components/slint/slint/versions/1.16.1/readme
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e121]: slint/slint
+              - text: v1.16.1
+            - generic [ref=e122]: uploaded 4 weeks ago
+            - generic [ref=e123]: Slint — declarative GUI toolkit
+    - generic [ref=e124]:
+      - heading "Recently updated" [level=1] [ref=e125]
+      - list [ref=e126]:
+        - link "phukrit7171/esp_tinybft v0.2.7 uploaded 44 minutes ago TinyBFT — memory-optimised PBFT consensus for ESP-IDF" [ref=e127] [cursor=pointer]:
+          - /url: /components/phukrit7171/esp_tinybft/versions/0.2.7/readme
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - generic [ref=e130]: phukrit7171/esp_tinybft
+              - text: v0.2.7
+            - generic [ref=e131]: uploaded 44 minutes ago
+            - generic [ref=e132]: TinyBFT — memory-optimised PBFT consensus for ESP-IDF
+        - link "joltwallet/littlefs v1.22.1 uploaded 4 hours ago LittleFS is a small fail-safe filesystem for micro-controllers." [ref=e133] [cursor=pointer]:
+          - /url: /components/joltwallet/littlefs/versions/1.22.1/readme
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - generic [ref=e136]: joltwallet/littlefs
+              - text: v1.22.1
+            - generic [ref=e137]: uploaded 4 hours ago
+            - generic [ref=e138]: LittleFS is a small fail-safe filesystem for micro-controllers.
+        - link "espressif/esp-zigbee-lib v2.0.1 uploaded 4 hours ago esp-zigbee library component" [ref=e139] [cursor=pointer]:
+          - /url: /components/espressif/esp-zigbee-lib/versions/2.0.1/readme
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]: espressif/esp-zigbee-lib
+              - text: v2.0.1
+            - generic [ref=e143]: uploaded 4 hours ago
+            - generic [ref=e144]: esp-zigbee library component
+        - link "esphome/dsmr_parser v1.5.0 uploaded 6 hours ago A parser for Dutch Smart Meter Requirements (DSMR) telegrams. Fork of arduino-dsmr. Doesn't depend on the Arduino framework and has many bug fixes and code quality improvements. Supports encrypted DSMR packets" [ref=e145] [cursor=pointer]:
+          - /url: /components/esphome/dsmr_parser/versions/1.5.0/readme
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]: esphome/dsmr_parser
+              - text: v1.5.0
+            - generic [ref=e149]: uploaded 6 hours ago
+            - generic [ref=e150]: A parser for Dutch Smart Meter Requirements (DSMR) telegrams. Fork of arduino-dsmr. Doesn't depend on the Arduino framework and has many bug fixes and code quality improvements. Supports encrypted DSMR packets
+        - link "jef-sure/mjson v0.0.2 uploaded 6 hours ago ESP-IDF component packaging Cesanta mjson with a reduced feature set for low-allocation JSON parsing" [ref=e151] [cursor=pointer]:
+          - /url: /components/jef-sure/mjson/versions/0.0.2/readme
+          - generic [ref=e152]:
+            - generic [ref=e153]:
+              - generic [ref=e154]: jef-sure/mjson
+              - text: v0.0.2
+            - generic [ref=e155]: uploaded 6 hours ago
+            - generic [ref=e156]: ESP-IDF component packaging Cesanta mjson with a reduced feature set for low-allocation JSON parsing
+        - link "espressif/esp-sr v2.4.5 uploaded 6 hours ago esp_sr provides basic algorithms for Speech Recognition applications" [ref=e157] [cursor=pointer]:
+          - /url: /components/espressif/esp-sr/versions/2.4.5/readme
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]: espressif/esp-sr
+              - text: v2.4.5
+            - generic [ref=e161]: uploaded 6 hours ago
+            - generic [ref=e162]: esp_sr provides basic algorithms for Speech Recognition applications
+        - link "espressif/esp_hosted v2.12.8 uploaded 7 hours ago ESP-Hosted-MCU provide drivers to act any ESP chipset as Wi-Fi or Bluetooth co-processor." [ref=e163] [cursor=pointer]:
+          - /url: /components/espressif/esp_hosted/versions/2.12.8/readme
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - generic [ref=e166]: espressif/esp_hosted
+              - text: v2.12.8
+            - generic [ref=e167]: uploaded 7 hours ago
+            - generic [ref=e168]: ESP-Hosted-MCU provide drivers to act any ESP chipset as Wi-Fi or Bluetooth co-processor.
+        - link "wzy-github123/esp_io_expander_tca6424 v1.0.0 uploaded 7 hours ago ESP IO Expander - tca6424(c)" [ref=e169] [cursor=pointer]:
+          - /url: /components/wzy-github123/esp_io_expander_tca6424/versions/1.0.0/readme
+          - generic [ref=e170]:
+            - generic [ref=e171]:
+              - generic [ref=e172]: wzy-github123/esp_io_expander_tca6424
+              - text: v1.0.0
+            - generic [ref=e173]: uploaded 7 hours ago
+            - generic [ref=e174]: ESP IO Expander - tca6424(c)
+    - generic [ref=e175]:
+      - heading "Top components" [level=1] [ref=e176]
+      - list [ref=e177]:
+        - link "espressif/mdns v1.11.1 uploaded 1 month ago Multicast UDP service used to provide local network service and host discovery." [ref=e178] [cursor=pointer]:
+          - /url: /components/espressif/mdns/versions/1.11.1/readme
+          - generic [ref=e179]:
+            - generic [ref=e180]:
+              - generic [ref=e181]: espressif/mdns
+              - text: v1.11.1
+            - generic [ref=e182]: uploaded 1 month ago
+            - generic [ref=e183]: Multicast UDP service used to provide local network service and host discovery.
+        - link "espressif/cmake_utilities v1.1.1 uploaded 1 year ago A collection of useful cmake utilities" [ref=e184] [cursor=pointer]:
+          - /url: /components/espressif/cmake_utilities/versions/1.1.1/readme
+          - generic [ref=e185]:
+            - generic [ref=e186]:
+              - generic [ref=e187]: espressif/cmake_utilities
+              - text: v1.1.1
+            - generic [ref=e188]: uploaded 1 year ago
+            - generic [ref=e189]: A collection of useful cmake utilities
+        - link "espressif/led_strip v3.0.3 uploaded 3 months ago Driver for Addressable LED Strip (WS2812, etc)" [ref=e190] [cursor=pointer]:
+          - /url: /components/espressif/led_strip/versions/3.0.3/readme
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - generic [ref=e193]: espressif/led_strip
+              - text: v3.0.3
+            - generic [ref=e194]: uploaded 3 months ago
+            - generic [ref=e195]: Driver for Addressable LED Strip (WS2812, etc)
+        - link "lvgl/lvgl v9.5.0 uploaded 3 months ago LVGL - Light and Versatile Graphics Library" [ref=e196] [cursor=pointer]:
+          - /url: /components/lvgl/lvgl/versions/9.5.0/readme
+          - generic [ref=e197]:
+            - generic [ref=e198]:
+              - generic [ref=e199]: lvgl/lvgl
+              - text: v9.5.0
+            - generic [ref=e200]: uploaded 3 months ago
+            - generic [ref=e201]: LVGL - Light and Versatile Graphics Library
+        - link "espressif/esp-dsp v1.8.2 uploaded 1 week ago ESP-DSP is the official DSP library for Espressif SoCs." [ref=e202] [cursor=pointer]:
+          - /url: /components/espressif/esp-dsp/versions/1.8.2/readme
+          - generic [ref=e203]:
+            - generic [ref=e204]:
+              - generic [ref=e205]: espressif/esp-dsp
+              - text: v1.8.2
+            - generic [ref=e206]: uploaded 1 week ago
+            - generic [ref=e207]: ESP-DSP is the official DSP library for Espressif SoCs.
+        - link "espressif/esp_secure_cert_mgr v2.9.2 uploaded 1 month ago ESP Secure Cert Manager" [ref=e208] [cursor=pointer]:
+          - /url: /components/espressif/esp_secure_cert_mgr/versions/2.9.2/readme
+          - generic [ref=e209]:
+            - generic [ref=e210]:
+              - generic [ref=e211]: espressif/esp_secure_cert_mgr
+              - text: v2.9.2
+            - generic [ref=e212]: uploaded 1 month ago
+            - generic [ref=e213]: ESP Secure Cert Manager
+        - link "espressif/button v4.1.6 uploaded 2 months ago GPIO and ADC and Matrix button driver" [ref=e214] [cursor=pointer]:
+          - /url: /components/espressif/button/versions/4.1.6/readme
+          - generic [ref=e215]:
+            - generic [ref=e216]:
+              - generic [ref=e217]: espressif/button
+              - text: v4.1.6
+            - generic [ref=e218]: uploaded 2 months ago
+            - generic [ref=e219]: GPIO and ADC and Matrix button driver
+        - link "espressif/esp_lcd_touch v1.2.1 uploaded 5 months ago ESP LCD Touch - main component for using touch screen controllers" [ref=e220] [cursor=pointer]:
+          - /url: /components/espressif/esp_lcd_touch/versions/1.2.1/readme
+          - generic [ref=e221]:
+            - generic [ref=e222]:
+              - generic [ref=e223]: espressif/esp_lcd_touch
+              - text: v1.2.1
+            - generic [ref=e224]: uploaded 5 months ago
+            - generic [ref=e225]: ESP LCD Touch - main component for using touch screen controllers
+  - contentinfo [ref=e226]:
+    - complementary [ref=e227]:
+      - paragraph [ref=e228]:
+        - text: © 2020-2026
+        - link "Espressif Systems" [ref=e229] [cursor=pointer]:
+          - /url: https://espressif.com/
+    - navigation [ref=e230]:
+      - link "Cookie Policy" [ref=e231] [cursor=pointer]:
+        - /url: /pages/cookie_policy
+      - link "Terms of use" [ref=e232] [cursor=pointer]:
+        - /url: /pages/terms
+      - link "Privacy Policy" [ref=e233] [cursor=pointer]:
+        - /url: /pages/policy

@@ -1,0 +1,163 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "ESP Component Registry" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img "ESP Component Registry" [ref=e5]
+      - list [ref=e24]:
+        - listitem [ref=e25]:
+          - link "Docs" [ref=e26] [cursor=pointer]:
+            - /url: https://docs.espressif.com/projects/idf-component-manager/
+        - listitem [ref=e27]:
+          - link "Blog" [ref=e28] [cursor=pointer]:
+            - /url: https://developer.espressif.com/tags/component/
+        - listitem [ref=e29]:
+          - link "Sign in" [ref=e30] [cursor=pointer]:
+            - /url: /users/login
+        - listitem [ref=e31]:
+          - generic [ref=e32] [cursor=pointer]:
+            - img [ref=e33]
+            - checkbox [ref=e35]
+            - img [ref=e36]
+  - banner
+  - generic [ref=e39]:
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - heading "hayschan/tm1637" [level=1] [ref=e42]:
+          - link "hayschan" [ref=e43] [cursor=pointer]:
+            - /url: /components?q=namespace:hayschan
+          - text: /tm1637
+        - generic [ref=e45]:
+          - paragraph [ref=e46]: 1.0.0
+          - generic [ref=e47]: Latest
+      - generic [ref=e48]: uploaded 2 years ago
+      - generic [ref=e49]: MAX6675 thermocouple amplifier SPI driver
+      - tablist [ref=e50]:
+        - tab "Readme"
+        - tab "Dependencies 1" [ref=e51] [cursor=pointer]:
+          - text: Dependencies
+          - generic [ref=e52]: "1"
+        - tab "Dependents 0":
+          - text: Dependents
+          - generic: "0"
+        - tab "Examples 0":
+          - text: Examples
+          - generic: "0"
+        - tab "Versions 1" [ref=e53] [cursor=pointer]:
+          - text: Versions
+          - generic [ref=e54]: "1"
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - heading "readme" [level=2] [ref=e57]
+        - heading "TM1637 ESP Component" [level=1] [ref=e59]
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - heading "Links" [level=4] [ref=e62]
+          - list [ref=e63]:
+            - listitem [ref=e64]:
+              - img [ref=e65]:
+                - img "Homepage" [ref=e66]
+              - link "Homepage" [ref=e68] [cursor=pointer]:
+                - /url: https://github.com/hayschan/max6675
+              - generic [ref=e69]:
+                - text: Link unreachable. Checked 8 hours ago.
+                - img [ref=e70]:
+                  - img [ref=e71]
+            - listitem [ref=e73]:
+              - img [ref=e74]:
+                - img "Documentation" [ref=e75]
+              - link "Documentation" [ref=e77] [cursor=pointer]:
+                - /url: https://github.com/hayschan/max6675/tree/main/README.md
+              - generic [ref=e78]:
+                - text: Link unreachable. Checked 8 hours ago.
+                - img [ref=e79]:
+                  - img [ref=e80]
+            - listitem [ref=e82]:
+              - img [ref=e83]:
+                - img "Repository" [ref=e84]
+              - link "Repository" [ref=e86] [cursor=pointer]:
+                - /url: https://github.com/hayschan/max6675.git
+              - generic [ref=e87]:
+                - text: Link unreachable. Checked 8 hours ago.
+                - img [ref=e88]:
+                  - img [ref=e89]
+            - listitem [ref=e91]:
+              - img [ref=e92]:
+                - img "Issues" [ref=e93]
+              - link "Issues" [ref=e95] [cursor=pointer]:
+                - /url: https://github.com/hayschan/max6675/issues
+              - generic [ref=e96]:
+                - text: Link unreachable. Checked 8 hours ago.
+                - img [ref=e97]:
+                  - img [ref=e98]
+        - heading "Supports all targets" [level=4] [ref=e101]
+        - heading "Maintainer" [level=4] [ref=e102]
+        - list [ref=e103]:
+          - listitem [ref=e104]: Hays Chan <blog@haysc.tech>
+        - 'heading "License: MIT" [level=4] [ref=e107]':
+          - text: "License:"
+          - link "MIT" [ref=e108] [cursor=pointer]:
+            - /url: /components/hayschan/tm1637/versions/1.0.0/license?language=en
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - text: "To add this component to your project, run:"
+            - generic [ref=e111]:
+              - generic [ref=e112]:
+                - text: Copy to Clipboard
+                - button [ref=e113]:
+                  - img [ref=e114]:
+                    - img [ref=e115]
+              - paragraph [ref=e117]: idf.py add-dependency "hayschan/tm1637^1.0.0"
+          - link "download archive" [ref=e118] [cursor=pointer]:
+            - /url: /api/downloads/?object_type=component&object_id=26b76b02-431c-41e9-8342-ce73194c2bdb
+        - generic [ref=e119]:
+          - heading "Stats" [level=4] [ref=e120]
+          - list [ref=e121]:
+            - listitem [ref=e122]:
+              - img [ref=e124]:
+                - img "Archive size" [ref=e125]
+              - generic [ref=e127]: Archive size ~ 8.86 KB
+            - listitem [ref=e128]:
+              - img "Downloaded in total" [ref=e130]:
+                - img [ref=e131]
+              - generic [ref=e133]: Downloaded in total 45 times
+            - listitem [ref=e134]:
+              - generic [ref=e135]:
+                - img "Weekly Downloads" [ref=e136]:
+                  - img [ref=e137]
+                - generic [ref=e139]: Weekly Downloads (All Versions)
+              - generic [ref=e140]:
+                - generic [ref=e141]: "1"
+                - generic [ref=e142]: May 11, 2026 — May 17, 2026
+              - img "Weekly downloads chart" [ref=e144]
+            - listitem [ref=e147]:
+              - img "Downloaded this version" [ref=e149]:
+                - img [ref=e150]
+              - generic [ref=e152]: "This version: 45 times"
+        - generic [ref=e153]:
+          - heading "Badge" [level=4] [ref=e154]
+          - generic [ref=e155]:
+            - 'img "hayschan/tm1637 version: 1.0.0" [ref=e156]'
+            - generic [ref=e157]:
+              - generic [ref=e158]:
+                - text: Copy to Clipboard
+                - button "HTML" [ref=e159] [cursor=pointer]
+              - generic [ref=e160]: "|"
+              - generic [ref=e161]:
+                - text: Copy to Clipboard
+                - button "Markdown" [ref=e162] [cursor=pointer]
+        - link "report abuse" [ref=e164] [cursor=pointer]:
+          - /url: mailto:components@espressif.com?subject=Report Abuse - hayschan/tm1637 v1.0.0
+  - contentinfo [ref=e165]:
+    - complementary [ref=e166]:
+      - paragraph [ref=e167]:
+        - text: © 2020-2026
+        - link "Espressif Systems" [ref=e168] [cursor=pointer]:
+          - /url: https://espressif.com/
+    - navigation [ref=e169]:
+      - link "Cookie Policy" [ref=e170] [cursor=pointer]:
+        - /url: /pages/cookie_policy
+      - link "Terms of use" [ref=e171] [cursor=pointer]:
+        - /url: /pages/terms
+      - link "Privacy Policy" [ref=e172] [cursor=pointer]:
+        - /url: /pages/policy
