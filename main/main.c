@@ -1,27 +1,15 @@
-/* Blink Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-#include <stdio.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/gpio.h"
 #include "esp_log.h"
-#include "led_strip.h"
 #include "sdkconfig.h"
-#include "tm1637.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
-#include "nvs_flash.h"
-#include "regex.h"
-#include "lwip/err.h"
-#include "lwip/sys.h"
 #include "display.h"
 #include "led.h"
+#include "wifi.h"
+#include "nvs_flash.h"
+#include <sys/_timeval.h>
+#include <sys/time.h>
+#include <time.h>
 
 static const char *TAG = "example";
 
@@ -29,16 +17,33 @@ static uint8_t s_led_state = 0;
 
 void app_main(void)
 {
-
-    /* Configure the peripheral according to the LED type */
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+    
     led_init();
     display_init();
+    wifi_init_sta();
+    init_sntp();
+
+    setenv("TZ", "PST8PDT,M3.2.0,M11.1.0", 1);
+    tzset();
 
     while (1) {
         ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
         
         led_set(s_led_state);
-        display_show_value(s_led_state);
+
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        struct tm now_tm;
+        localtime_r(&tv.tv_sec, &now_tm);
+        uint8_t hour12 = now_tm.tm_hour % 12;
+        if (hour12 == 0) hour12 = 12;
+        display_show_time(hour12, now_tm.tm_min);
 
         /* Toggle the LED state */
         s_led_state = !s_led_state;

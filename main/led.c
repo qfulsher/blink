@@ -4,13 +4,12 @@
 #include "led_strip.h"
 #include "sdkconfig.h"
 #define BLINK_GPIO CONFIG_BLINK_GPIO
-
-
 #ifdef CONFIG_BLINK_LED_STRIP
+static const char *TAG = "example";
 
 static led_strip_handle_t led_strip;
 
-static void led_init(void)
+void led_init(void)
 {
     ESP_LOGI(TAG, "Example configured to blink addressable LED!");
     /* LED strip initialization with the GPIO and pixels number*/
@@ -24,40 +23,14 @@ static void led_init(void)
         .flags.with_dma = false,
     };
     ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &led_strip));
-#elif CONFIG_BLINK_LED_STRIP_BACKEND_SPI
-    led_strip_spi_config_t spi_config = {
-        .spi_bus = SPI2_HOST,
-        .flags.with_dma = true,
-    };
-    ESP_ERROR_CHECK(led_strip_new_spi_device(&strip_config, &spi_config, &led_strip));
-#else
-#error "unsupported LED strip backend"
 #endif
     /* Set all LED off to clear all pixels */
     led_strip_clear(led_strip);
 }
 
-#elif CONFIG_BLINK_LED_GPIO
-
-static void blink_led(void)
-{
-    /* Set the GPIO level according to the state (LOW or HIGH)*/
-    gpio_set_level(BLINK_GPIO, s_led_state);
-}
-
-static void configure_led(void)
-{
-    ESP_LOGI(TAG, "Example configured to blink GPIO LED!");
-    gpio_reset_pin(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-}
-
-#else
-#error "unsupported LED type"
 #endif
 
-static void led_set(bool on)
+void led_set(bool on)
 {
     /* If the addressable LED is enabled */
     if (on) {
