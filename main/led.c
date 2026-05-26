@@ -8,6 +8,7 @@
 static const char *TAG = "example";
 
 static led_strip_handle_t led_strip;
+static bool s_led_on = false;
 
 void led_init(void)
 {
@@ -32,14 +33,16 @@ void led_init(void)
 
 void led_set(bool on)
 {
-    /* If the addressable LED is enabled */
+    s_led_on = on;
     if (on) {
-        /* Set the LED pixel using RGB from 0 (0%) to 255 (100%) for each color */
         led_strip_set_pixel(led_strip, 0, 16, 16, 16);
-        /* Refresh the strip to send data */
         led_strip_refresh(led_strip);
     } else {
-        /* Set all LED off to clear all pixels */
         led_strip_clear(led_strip);
     }
+}
+
+bool led_get(void)
+{
+    return s_led_on;
 }

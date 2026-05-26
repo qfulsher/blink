@@ -3,3 +3,4 @@
 
 void led_init(void);
 void led_set(bool on);
+bool led_get(void);

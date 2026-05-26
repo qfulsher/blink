@@ -6,14 +6,12 @@
 #include "display.h"
 #include "led.h"
 #include "wifi.h"
+#include "web.h"
 #include "nvs_flash.h"
-#include <sys/_timeval.h>
 #include <sys/time.h>
 #include <time.h>
 
 static const char *TAG = "example";
-
-static uint8_t s_led_state = 0;
 
 void app_main(void)
 {
@@ -23,20 +21,17 @@ void app_main(void)
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-    
+
     led_init();
     display_init();
     wifi_init_sta();
     init_sntp();
+    web_init();
 
     setenv("TZ", "PST8PDT,M3.2.0,M11.1.0", 1);
     tzset();
 
     while (1) {
-        ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-        
-        led_set(s_led_state);
-
         struct timeval tv;
         gettimeofday(&tv, NULL);
         struct tm now_tm;
@@ -45,8 +40,7 @@ void app_main(void)
         if (hour12 == 0) hour12 = 12;
         display_show_time(hour12, now_tm.tm_min);
 
-        /* Toggle the LED state */
-        s_led_state = !s_led_state;
+        ESP_LOGI(TAG, "%02d:%02d  LED=%s", hour12, now_tm.tm_min, led_get() ? "ON" : "OFF");
         vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
     }
 }
