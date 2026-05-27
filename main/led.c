@@ -3,7 +3,10 @@
 #include "esp_log.h"
 #include "led_strip.h"
 #include "sdkconfig.h"
+#include "display.h"
 #define BLINK_GPIO CONFIG_BLINK_GPIO
+
+#define LED_DISPLAY_OVERRIDE_MS 2000
 #ifdef CONFIG_BLINK_LED_STRIP
 static const char *TAG = "example";
 
@@ -33,12 +36,16 @@ void led_init(void)
 
 void led_set(bool on)
 {
+    bool changed = (on != s_led_on);
     s_led_on = on;
     if (on) {
         led_strip_set_pixel(led_strip, 0, 16, 16, 16);
         led_strip_refresh(led_strip);
     } else {
         led_strip_clear(led_strip);
+    }
+    if (changed) {
+        display_show_value_temp(on ? 1 : 0, LED_DISPLAY_OVERRIDE_MS);
     }
 }
 
