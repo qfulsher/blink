@@ -11,6 +11,7 @@
 #include "esp_err.h"
 #include "esp_http_server.h"
 #include "esp_log.h"
+#include "http_parser.h"
 #include "mdns.h"
 #include "cJSON.h"
 
@@ -182,7 +183,7 @@ static esp_err_t led_color_post_handler(httpd_req_t *req)
 
 // Validates and extracts the filename from /api/files/<filename>.
 // On error: sends a 400 and returns NULL.
-static const char *parse_upload_filename(httpd_req_t *req)
+static const char *parse_file_uri(httpd_req_t *req)
 {
     const char *prefix = "/api/files/";
     const size_t prefix_len = strlen(prefix);
@@ -210,7 +211,7 @@ static const char *parse_upload_filename(httpd_req_t *req)
 
 static esp_err_t files_upload_handler(httpd_req_t *req)
 {
-    const char *filename = parse_upload_filename(req);
+    const char *filename = parse_file_uri(req);
     if (!filename) return ESP_FAIL;
 
     if (req->content_len == 0) {
@@ -328,6 +329,26 @@ static esp_err_t files_list_handler(httpd_req_t *req) {
   return r;
 }
 
+static esp_err_t files_delete_handler(httpd_req_t *req) {
+    const char *filename = parse_file_uri(req);
+    if (!filename) return ESP_FAIL;
+
+    char rel_path[128];
+    int pn = snprintf(rel_path, sizeof(rel_path), "%s/%s", MUSIC_DIR, filename);
+    if (pn < 0 || (size_t)pn >= sizeof(rel_path)) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "path too long");
+        return ESP_FAIL;
+    }
+
+    if (sd_delete(rel_path) != 0 && errno != ENOENT) {
+        ESP_LOGW(TAG, "delete %s failed: errno %d (%s)",
+               rel_path, errno, strerror(errno));
+    }
+
+    httpd_resp_set_status(req, "204 No Content");
+    return httpd_resp_send(req, NULL, 0);
+}
+
 static void start_mdns(void)
 {
     ESP_ERROR_CHECK(mdns_init());
@@ -347,15 +368,16 @@ void web_init(void)
     ESP_ERROR_CHECK(httpd_start(&server, &config));
 
     const httpd_uri_t routes[] = {
-        { .uri = "/",              .method = HTTP_GET,  .handler = index_handler },
-        { .uri = "/style.css",     .method = HTTP_GET,  .handler = css_handler },
-        { .uri = "/app.js",        .method = HTTP_GET,  .handler = js_handler },
-        { .uri = "/api/led",       .method = HTTP_GET,  .handler = led_get_handler },
-        { .uri = "/api/led",       .method = HTTP_POST, .handler = led_post_handler },
-        { .uri = "/api/led/color", .method = HTTP_GET,  .handler = led_color_get_handler },
-        { .uri = "/api/led/color", .method = HTTP_POST, .handler = led_color_post_handler },
-        { .uri = "/api/files/*",   .method = HTTP_POST, .handler = files_upload_handler },
-        { .uri = "/api/files",     .method = HTTP_GET,  .handler = files_list_handler },
+        { .uri = "/",              .method = HTTP_GET,    .handler = index_handler },
+        { .uri = "/style.css",     .method = HTTP_GET,    .handler = css_handler },
+        { .uri = "/app.js",        .method = HTTP_GET,    .handler = js_handler },
+        { .uri = "/api/led",       .method = HTTP_GET,    .handler = led_get_handler },
+        { .uri = "/api/led",       .method = HTTP_POST,   .handler = led_post_handler },
+        { .uri = "/api/led/color", .method = HTTP_GET,    .handler = led_color_get_handler },
+        { .uri = "/api/led/color", .method = HTTP_POST,   .handler = led_color_post_handler },
+        { .uri = "/api/files",     .method = HTTP_GET,    .handler = files_list_handler },
+        { .uri = "/api/files/*",   .method = HTTP_POST,   .handler = files_upload_handler },
+        { .uri = "/api/files/*",   .method = HTTP_DELETE, .handler = files_delete_handler },
     };
     for (size_t i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {
         ESP_ERROR_CHECK(httpd_register_uri_handler(server, &routes[i]));
