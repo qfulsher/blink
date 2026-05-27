@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <dirent.h> 
 
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
@@ -77,6 +78,28 @@ bool sd_exists(const char *path)
     struct stat st;
     return stat(abs, &st) == 0;
 }
+
+int sd_list_dir(const char *path, sd_dir_cb cb, void *user)
+{
+    char abs[SD_MAX_PATH];
+    build_abs(abs, sizeof(abs), path);
+    DIR *dir = opendir(abs);
+    if (!dir) {
+        if (errno == ENOENT) {
+            ESP_LOGD(TAG, "list: %s does not exist", abs);
+        } else {
+            ESP_LOGE(TAG, "open for listing failed: %s (errno %d: %s)");
+        }
+        return -1;
+    }
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        cb(entry->d_name, entry->d_type==DT_DIR, user);
+    }
+    closedir(dir);
+    return 0;
+}
+
 
 int sd_delete(const char *path)
 {

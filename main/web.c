@@ -294,6 +294,44 @@ static esp_err_t files_upload_handler(httpd_req_t *req)
     return httpd_resp_send(req, resp, rn);
 }
 
+static void wave_list_cb(const char *name, bool is_dir, void *user) {
+    cJSON *arr = (cJSON *)user;
+    if(is_dir) return;
+    size_t n = strlen(name);
+    
+    // skip non-wav files
+    if(n < 5 || strcasecmp(name+n-4, ".wav") != 0) {
+        return;
+    }
+
+    cJSON_AddItemToArray(arr, cJSON_CreateString(name));
+}
+
+static esp_err_t files_list_handler(httpd_req_t *req) {
+  cJSON *arr = cJSON_CreateArray();
+  if (sd_list_dir("music", wave_list_cb, arr)) {
+    // let no-directory be a 200 with an empty array
+    if (errno != ENOENT) {
+      ESP_LOGE(TAG, "Failed to list music files: %s (errno %d: %s)", "music",
+               errno, strerror(errno));
+      httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR,
+                          "could not read music directory");
+      cJSON_Delete(arr);
+      return ESP_FAIL;
+    }
+  }
+
+  cJSON *obj = cJSON_CreateObject();
+  cJSON_AddItemToObject(obj, "files", arr);
+
+  char *response_json = cJSON_PrintUnformatted(obj);
+  cJSON_Delete(obj);
+
+  esp_err_t r = httpd_resp_send(req, response_json, strlen(response_json));
+  free(response_json);
+  return r;
+}
+
 static void start_mdns(void)
 {
     ESP_ERROR_CHECK(mdns_init());
@@ -308,6 +346,7 @@ void web_init(void)
 
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.uri_match_fn = httpd_uri_match_wildcard; // needed for /api/files/*
+    config.max_uri_handlers = 16;
     httpd_handle_t server = NULL;
     ESP_ERROR_CHECK(httpd_start(&server, &config));
 
@@ -320,6 +359,7 @@ void web_init(void)
         { .uri = "/api/led/color", .method = HTTP_GET,  .handler = led_color_get_handler },
         { .uri = "/api/led/color", .method = HTTP_POST, .handler = led_color_post_handler },
         { .uri = "/api/files/*",   .method = HTTP_POST, .handler = files_upload_handler },
+        { .uri = "/api/files",     .method = HTTP_GET,  .handler = files_list_handler },
     };
     for (size_t i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {
         ESP_ERROR_CHECK(httpd_register_uri_handler(server, &routes[i]));

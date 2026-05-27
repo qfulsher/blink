@@ -23,6 +23,21 @@ void sd_init(void);
 bool sd_exists(const char *path);
 
 /**
+ * Callback invoked once per entry by sd_list_dir.
+ * @param name   Entry name only — no path prefix.
+ * @param is_dir True if the entry is a subdirectory.
+ * @param user   Opaque pointer forwarded from sd_list_dir.
+ */
+typedef void (*sd_dir_cb)(const char *name, bool is_dir, void *user);
+
+/**
+ * List entries at `path` (relative to SD_MOUNT_POINT). Calls `cb` once per
+ * entry. Returns 0 on success, -1 on error (errno set: ENOENT if path doesn't
+ * exist, EACCES, etc.).
+ */
+int sd_list_dir(const char *path, sd_dir_cb cb, void *user);
+
+/**
  * Delete the file at `path` (relative to SD_MOUNT_POINT).
  * Returns 0 on success, -1 on error.
  */
