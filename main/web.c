@@ -1,8 +1,14 @@
 #include "web.h"
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "esp_err.h"
 #include "esp_http_server.h"
@@ -11,6 +17,7 @@
 #include "cJSON.h"
 
 #include "led.h"
+#include "sd.h"
 
 static const char *TAG = "web";
 
@@ -170,6 +177,123 @@ static esp_err_t led_color_post_handler(httpd_req_t *req)
     return send_led_color(req, color);
 }
 
+#define UPLOAD_DIR        SD_MOUNT_POINT "/music"
+#define UPLOAD_CHUNK_SIZE 4096
+#define UPLOAD_MAX_BYTES  (32 * 1024 * 1024)
+#define UPLOAD_RECV_RETRIES 3
+
+// Validates and extracts the filename from /api/files/<filename>.
+// On error: sends a 400 and returns NULL.
+static const char *parse_upload_filename(httpd_req_t *req)
+{
+    const char *prefix = "/api/files/";
+    const size_t prefix_len = strlen(prefix);
+    if (strncmp(req->uri, prefix, prefix_len) != 0) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "bad URI");
+        return NULL;
+    }
+    const char *filename = req->uri + prefix_len;
+    size_t fn_len = strlen(filename);
+
+    if (fn_len == 0 || fn_len > 100) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "filename must be 1-100 chars");
+        return NULL;
+    }
+    if (strchr(filename, '/') || strstr(filename, "..")) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "filename cannot contain '/' or '..'");
+        return NULL;
+    }
+    if (fn_len < 5 || strcasecmp(filename + fn_len - 4, ".wav") != 0) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "only .wav files are allowed");
+        return NULL;
+    }
+    return filename;
+}
+
+static esp_err_t files_upload_handler(httpd_req_t *req)
+{
+    const char *filename = parse_upload_filename(req);
+    if (!filename) return ESP_FAIL;
+
+    if (req->content_len == 0) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "empty body");
+        return ESP_FAIL;
+    }
+    if (req->content_len > UPLOAD_MAX_BYTES) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "file too large (max 32MB)");
+        return ESP_FAIL;
+    }
+
+    if (mkdir(UPLOAD_DIR, 0777) != 0 && errno != EEXIST) {
+        ESP_LOGE(TAG, "mkdir %s failed: errno %d (%s)", UPLOAD_DIR, errno, strerror(errno));
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "could not create upload dir");
+        return ESP_FAIL;
+    }
+
+    char path[256];
+    int pn = snprintf(path, sizeof(path), "%s/%s", UPLOAD_DIR, filename);
+    if (pn < 0 || (size_t)pn >= sizeof(path)) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "path too long");
+        return ESP_FAIL;
+    }
+
+    FILE *f = fopen(path, "wb");
+    if (!f) {
+        ESP_LOGE(TAG, "fopen %s failed: errno %d (%s)", path, errno, strerror(errno));
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "could not open file");
+        return ESP_FAIL;
+    }
+
+    // Heap allocate the chunk buffer to keep the httpd task stack happy.
+    char *buf = malloc(UPLOAD_CHUNK_SIZE);
+    if (!buf) {
+        fclose(f);
+        unlink(path);
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "out of memory");
+        return ESP_FAIL;
+    }
+
+    int total = 0;
+    int remaining = req->content_len;
+    int retries = 0;
+    while (remaining > 0) {
+        int chunk = remaining < UPLOAD_CHUNK_SIZE ? remaining : UPLOAD_CHUNK_SIZE;
+        int received = httpd_req_recv(req, buf, chunk);
+        if (received <= 0) {
+            if (received == HTTPD_SOCK_ERR_TIMEOUT && retries < UPLOAD_RECV_RETRIES) {
+                retries++;
+                continue;
+            }
+            ESP_LOGE(TAG, "recv failed at %d/%d bytes: %d", total, (int)req->content_len, received);
+            free(buf);
+            fclose(f);
+            unlink(path);
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "failed to receive body");
+            return ESP_FAIL;
+        }
+        retries = 0;
+        if (fwrite(buf, 1, received, f) != (size_t)received) {
+            ESP_LOGE(TAG, "fwrite failed at %d bytes: errno %d (%s)", total, errno, strerror(errno));
+            free(buf);
+            fclose(f);
+            unlink(path);
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "SD write failed");
+            return ESP_FAIL;
+        }
+        total += received;
+        remaining -= received;
+    }
+    free(buf);
+    fclose(f);
+
+    ESP_LOGI(TAG, "uploaded %d bytes to %s", total, path);
+
+    char resp[160];
+    int rn = snprintf(resp, sizeof(resp), "{\"path\":\"music/%s\",\"size\":%d}", filename, total);
+    httpd_resp_set_type(req, "application/json");
+    return httpd_resp_send(req, resp, rn);
+}
+
 static void start_mdns(void)
 {
     ESP_ERROR_CHECK(mdns_init());
@@ -183,6 +307,7 @@ void web_init(void)
     start_mdns();
 
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    config.uri_match_fn = httpd_uri_match_wildcard; // needed for /api/files/*
     httpd_handle_t server = NULL;
     ESP_ERROR_CHECK(httpd_start(&server, &config));
 
@@ -194,6 +319,7 @@ void web_init(void)
         { .uri = "/api/led",       .method = HTTP_POST, .handler = led_post_handler },
         { .uri = "/api/led/color", .method = HTTP_GET,  .handler = led_color_get_handler },
         { .uri = "/api/led/color", .method = HTTP_POST, .handler = led_color_post_handler },
+        { .uri = "/api/files/*",   .method = HTTP_POST, .handler = files_upload_handler },
     };
     for (size_t i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {
         ESP_ERROR_CHECK(httpd_register_uri_handler(server, &routes[i]));

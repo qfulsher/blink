@@ -6,6 +6,7 @@
 #include "wifi.h"
 #include "web.h"
 #include "clock.h"
+#include "sd.h"
 #include "nvs_flash.h"
 #include "time.h"
 
@@ -25,6 +26,7 @@ void app_main(void)
 
     led_init();
     display_init();
+    sd_init();
     wifi_init_sta();
     init_sntp();
     web_init();
