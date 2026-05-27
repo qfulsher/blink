@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include "esp_err.h"
 #include "esp_http_server.h"
@@ -177,7 +175,7 @@ static esp_err_t led_color_post_handler(httpd_req_t *req)
     return send_led_color(req, color);
 }
 
-#define UPLOAD_DIR        SD_MOUNT_POINT "/music"
+#define MUSIC_DIR         "music"
 #define UPLOAD_CHUNK_SIZE 4096
 #define UPLOAD_MAX_BYTES  (32 * 1024 * 1024)
 #define UPLOAD_RECV_RETRIES 3
@@ -224,22 +222,20 @@ static esp_err_t files_upload_handler(httpd_req_t *req)
         return ESP_FAIL;
     }
 
-    if (mkdir(UPLOAD_DIR, 0777) != 0 && errno != EEXIST) {
-        ESP_LOGE(TAG, "mkdir %s failed: errno %d (%s)", UPLOAD_DIR, errno, strerror(errno));
+    if (sd_mkdir(MUSIC_DIR) != 0) {
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "could not create upload dir");
         return ESP_FAIL;
     }
 
-    char path[256];
-    int pn = snprintf(path, sizeof(path), "%s/%s", UPLOAD_DIR, filename);
-    if (pn < 0 || (size_t)pn >= sizeof(path)) {
+    char rel_path[128];
+    int pn = snprintf(rel_path, sizeof(rel_path), "%s/%s", MUSIC_DIR, filename);
+    if (pn < 0 || (size_t)pn >= sizeof(rel_path)) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "path too long");
         return ESP_FAIL;
     }
 
-    FILE *f = fopen(path, "wb");
+    FILE *f = sd_fopen(rel_path, "wb");
     if (!f) {
-        ESP_LOGE(TAG, "fopen %s failed: errno %d (%s)", path, errno, strerror(errno));
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "could not open file");
         return ESP_FAIL;
     }
@@ -248,7 +244,7 @@ static esp_err_t files_upload_handler(httpd_req_t *req)
     char *buf = malloc(UPLOAD_CHUNK_SIZE);
     if (!buf) {
         fclose(f);
-        unlink(path);
+        sd_delete(rel_path);
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "out of memory");
         return ESP_FAIL;
     }
@@ -267,7 +263,7 @@ static esp_err_t files_upload_handler(httpd_req_t *req)
             ESP_LOGE(TAG, "recv failed at %d/%d bytes: %d", total, (int)req->content_len, received);
             free(buf);
             fclose(f);
-            unlink(path);
+            sd_delete(rel_path);
             httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "failed to receive body");
             return ESP_FAIL;
         }
@@ -276,7 +272,7 @@ static esp_err_t files_upload_handler(httpd_req_t *req)
             ESP_LOGE(TAG, "fwrite failed at %d bytes: errno %d (%s)", total, errno, strerror(errno));
             free(buf);
             fclose(f);
-            unlink(path);
+            sd_delete(rel_path);
             httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "SD write failed");
             return ESP_FAIL;
         }
@@ -286,10 +282,10 @@ static esp_err_t files_upload_handler(httpd_req_t *req)
     free(buf);
     fclose(f);
 
-    ESP_LOGI(TAG, "uploaded %d bytes to %s", total, path);
+    ESP_LOGI(TAG, "uploaded %d bytes to %s", total, rel_path);
 
     char resp[160];
-    int rn = snprintf(resp, sizeof(resp), "{\"path\":\"music/%s\",\"size\":%d}", filename, total);
+    int rn = snprintf(resp, sizeof(resp), "{\"path\":\"%s\",\"size\":%d}", rel_path, total);
     httpd_resp_set_type(req, "application/json");
     return httpd_resp_send(req, resp, rn);
 }
@@ -309,10 +305,10 @@ static void wave_list_cb(const char *name, bool is_dir, void *user) {
 
 static esp_err_t files_list_handler(httpd_req_t *req) {
   cJSON *arr = cJSON_CreateArray();
-  if (sd_list_dir("music", wave_list_cb, arr)) {
+  if (sd_list_dir(MUSIC_DIR, wave_list_cb, arr)) {
     // let no-directory be a 200 with an empty array
     if (errno != ENOENT) {
-      ESP_LOGE(TAG, "Failed to list music files: %s (errno %d: %s)", "music",
+      ESP_LOGE(TAG, "Failed to list music files: %s (errno %d: %s)", MUSIC_DIR,
                errno, strerror(errno));
       httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR,
                           "could not read music directory");

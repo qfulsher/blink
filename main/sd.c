@@ -79,6 +79,30 @@ bool sd_exists(const char *path)
     return stat(abs, &st) == 0;
 }
 
+int sd_mkdir(const char *path)
+{
+    char abs[SD_MAX_PATH];
+    build_abs(abs, sizeof(abs), path);
+    if (mkdir(abs, 0777) != 0 && errno != EEXIST) {
+        ESP_LOGE(TAG, "mkdir %s failed: errno %d (%s)",
+                 abs, errno, strerror(errno));
+        return -1;
+    }
+    return 0;
+}
+
+FILE *sd_fopen(const char *path, const char *mode)
+{
+    char abs[SD_MAX_PATH];
+    build_abs(abs, sizeof(abs), path);
+    FILE *f = fopen(abs, mode);
+    if (!f) {
+        ESP_LOGE(TAG, "fopen %s (%s) failed: errno %d (%s)",
+                 abs, mode, errno, strerror(errno));
+    }
+    return f;
+}
+
 int sd_list_dir(const char *path, sd_dir_cb cb, void *user)
 {
     char abs[SD_MAX_PATH];
@@ -88,7 +112,8 @@ int sd_list_dir(const char *path, sd_dir_cb cb, void *user)
         if (errno == ENOENT) {
             ESP_LOGD(TAG, "list: %s does not exist", abs);
         } else {
-            ESP_LOGE(TAG, "open for listing failed: %s (errno %d: %s)");
+            ESP_LOGE(TAG, "open for listing failed: %s (errno %d: %s)",
+                     abs, errno, strerror(errno));
         }
         return -1;
     }

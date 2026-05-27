@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
 /**
  * Filesystem mount point. Use this to build absolute paths when calling into
@@ -21,6 +22,20 @@ void sd_init(void);
  * True if `path` (relative to SD_MOUNT_POINT) exists.
  */
 bool sd_exists(const char *path);
+
+/**
+ * Create the directory at `path` (relative to SD_MOUNT_POINT). Returns 0 on
+ * success or if the directory already exists; -1 with errno set on other
+ * errors.
+ */
+int sd_mkdir(const char *path);
+
+/**
+ * Open the file at `path` (relative to SD_MOUNT_POINT) with the given mode
+ * (e.g. "rb", "wb", "ab"). Returns a FILE* the caller must close with
+ * fclose(), or NULL on error (errno set).
+ */
+FILE *sd_fopen(const char *path, const char *mode);
 
 /**
  * Callback invoked once per entry by sd_list_dir.
