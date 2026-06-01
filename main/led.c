@@ -8,7 +8,7 @@
 #include "display.h"
 
 #define LED_GPIO                 6
-#define LED_NUM_LEDS             12
+#define LED_NUM_LEDS             16
 #define LED_DISPLAY_OVERRIDE_MS  2000
 #define LED_DEFAULT_WHITE        64   // default brightness for led_set(true)
 
