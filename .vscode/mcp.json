@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"ESP-IDF MCP Server": {
+			"type": "stdio",
+			"command": "eim",
+			"args": [
+				"run",
+				"idf.py mcp-server"
+			]
+		}
+	},
+	"inputs": []
+}

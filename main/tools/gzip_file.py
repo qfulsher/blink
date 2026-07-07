@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Compress a single file with gzip at maximum compression. Used by CMake to
 pre-compress web assets before embedding them in firmware.
 

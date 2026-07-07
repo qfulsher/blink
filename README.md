@@ -1,76 +1,57 @@
 Q Notes: 
-
-1. Run `subst E: C:\Users\QuentinFulsher\.espressif` to map the E drive, otherwise you'll hit a 260 char path limit when compiling.
-2. Before running any idf commands run `E:\v6.0.1\esp-idf\export.ps1` to setup the CLI environment. 
-3. Go to https://components.espressif.com/ to lookup components, after adding dependencies use `idf.py reconfigure` to pick them up
+1. Run `source "/home/quentin/.espressif/tools/activate_idf_v6.0.2.sh"` to activate the virtual environment. Then you can run `idf.py` commands.
+2. Go to https://components.espressif.com/ to lookup components, after adding dependencies use `idf.py reconfigure` to pick them up
 
 
 | Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C5 | ESP32-C6 | ESP32-C61 | ESP32-H2 | ESP32-H21 | ESP32-H4 | ESP32-P4 | ESP32-S2 | ESP32-S3 |
 | ----------------- | ----- | -------- | -------- | -------- | -------- | --------- | -------- | --------- | -------- | -------- | -------- | -------- |
 
-# Blink Example
+# openHatch / blink
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+This repository contains firmware for an ESP32-C6 based openHatch device. The project combines an SK6812 RGBW NeoPixel ring, a TM1637 4-digit 7-segment display, Wi-Fi control, a small embedded web UI, and SD-card storage for uploaded audio files.
 
-This example demonstrates how to blink a LED by using the GPIO driver or using the [led_strip](https://components.espressif.com/component/espressif/led_strip) library if the LED is addressable e.g. [WS2812](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf). The `led_strip` library is installed via [component manager](main/idf_component.yml).
+## What the device does
 
-## How to Use Example
+- Drives a 16-LED SK6812 RGBW ring over RMT.
+- Shows time on a TM1637 4-digit display with temporary override support for status messages.
+- Starts a Wi-Fi station, syncs time with NTP, and hosts a local web interface.
+- Stores uploaded `.wav` files on an SD card mounted at `/sdcard`.
 
-Before project configuration and build, be sure to set the correct chip target using `idf.py set-target <chip_name>`.
+## Hardware notes
 
-### Hardware Required
+- Target chip: ESP32-C6
+- LED ring: SK6812 RGBW, GPIO 6
+- Display: TM1637, CLK GPIO 5, DIO GPIO 4
+- SD card interface: SPI2 with the pins defined in the SD subsystem
+- The device is intended to be controlled over Wi-Fi through the embedded HTTP server and web UI
 
-* A development board with normal LED or addressable LED on-board (e.g., ESP32-S3-DevKitC, ESP32-C6-DevKitC etc.)
-* A USB cable for Power supply and programming
+## Development setup
 
-See [Development Boards](https://www.espressif.com/en/products/devkits) for more information about it.
+1. Activate the ESP-IDF environment in your shell.
+2. Set the target to ESP32-C6.
+3. Build and flash from the project root.
 
-### Configure the Project
-
-Open the project configuration menu (`idf.py menuconfig`).
-
-In the `Example Configuration` menu:
-
-* Select the LED type in the `Blink LED type` option.
-  * Use `GPIO` for regular LED
-  * Use `LED strip` for addressable LED
-* If the LED type is `LED strip`, select the backend peripheral
-  * `RMT` is only available for ESP targets with RMT peripheral supported
-  * `SPI` is available for all ESP targets
-* Set the GPIO number used for the signal in the `Blink GPIO number` option.
-* Set the blinking period in the `Blink period in ms` option.
-
-### Build and Flash
-
-Run `idf.py -p PORT flash monitor` to build, flash and monitor the project.
-
-(To exit the serial monitor, type ``Ctrl-]``.)
-
-See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for full steps to configure and use ESP-IDF to build projects.
-
-## Example Output
-
-As you run the example, you will see the LED blinking, according to the previously defined period. For the addressable LED, you can also change the LED color by setting the `led_strip_set_pixel(led_strip, 0, 16, 16, 16);` (LED Strip, Pixel Number, Red, Green, Blue) with values from 0 to 255 in the [source file](main/main.c).
-
-```text
-I (315) example: Example configured to blink addressable LED!
-I (325) example: Turning the LED OFF!
-I (1325) example: Turning the LED ON!
-I (2325) example: Turning the LED OFF!
-I (3325) example: Turning the LED ON!
-I (4325) example: Turning the LED OFF!
-I (5325) example: Turning the LED ON!
-I (6325) example: Turning the LED OFF!
-I (7325) example: Turning the LED ON!
-I (8325) example: Turning the LED OFF!
+```bash
+source "/home/quentin/.espressif/tools/activate_idf_v6.0.2.sh"
+export IDF_TARGET=esp32c6
+idf.py build
+idf.py flash
 ```
 
-Note: The color order could be different according to the LED model.
+## Project structure
 
-The pixel number indicates the pixel position in the LED strip. For a single LED, use 0.
+- [main/main.c](main/main.c) is the top-level orchestration entry point.
+- [main/led.c](main/led.c) and [main/display.c](main/display.c) handle the LED ring and clock display.
+- [main/wifi.c](main/wifi.c) and [main/web.c](main/web.c) manage networking and the embedded UI.
+- [main/sd.c](main/sd.c) handles SD card mounting and file operations.
+- [main/web_assets](main/web_assets) contains the web UI assets that are embedded at build time.
 
-## Troubleshooting
+## Build details
 
-* If the LED isn't blinking, check the GPIO or the LED type selection in the `Example Configuration` menu.
+- The web UI assets are pre-gzipped during the build via [main/tools/gzip_file.py](main/tools/gzip_file.py).
+- The firmware targets the ESP32-C6 and uses the ESP-IDF component manager for dependencies such as `led_strip` and `tm1637` support.
 
-For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you soon.
+## Notes
+
+- Wi-Fi credentials, GPIO assignments, and the mDNS hostname are currently compile-time constants.
+- The SD card breakout requires a 5V supply for reliable mounting.
